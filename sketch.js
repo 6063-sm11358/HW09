@@ -6,8 +6,10 @@ let yPos_Text;
 let colorText;
 
 let speechOut;
+let speechRec;
 let paraNum;
-let numVoices;
+let paraDone = [];
+let paraFound = 0;
 
 let startButton;
 let stopButton;
@@ -58,10 +60,10 @@ function setup()
   textAlign(CENTER,CENTER);
   textSize(16);
   textFont('sans-serif');
-  text('You choose the pitch, "speed", and the voice. The code chooses the paragraph.', width/1.37, height/6.7, 350, 200);
+  text('You choose the "speed", pitch, and the voice. The code chooses the paragraph.', width/1.37, height/6.7, 350, 200);
 
   //generating buttons
-  speakButton = new speechButton('Speak', width/1.26, height/2, startSpeech);
+  speakButton = new speechButton('Read', width/1.26, height/2, startSpeech);
   stopButton = new speechButton('Stop', width/1.17, height/2, stopSpeech);
 
   fill(0);
@@ -78,8 +80,10 @@ function setup()
   //generating speech property sliders
   rateSlider = createSlider(0.1, 2, 1, 0.1);
   rateSlider.position(width/1.22,height/1.69);
+
   pitchSlider = createSlider(0.01, 2, 1, 0);
   pitchSlider.position(width/1.22,height/1.55);
+
   voiceSlider = createSlider(1,24,1,1);
   voiceSlider.position(width/1.22,height/1.43);
 }
@@ -88,9 +92,40 @@ function setup()
 function startSpeech()
 {
   paraNum = int(random(0,projectText.length));
-  speechOut.speak(projectText[paraNum]);
 
-  colorText = true;
+  //code to check whether the "active" paragraph has been read or not
+  for(i=0;i<paraDone.length;i++)
+  {
+    if(paraDone[i]==paraNum)
+    {
+      paraFound = 1;
+      break;
+    }
+    else
+    {
+      paraFound = 0;
+    }
+  }
+
+  //speak paragraph and append para index if unique paragraph
+  //run whole function again if non-unique paragraph
+  if(paraFound==0)
+  {
+    paraDone.push(paraNum);
+    speechOut.speak(projectText[paraNum]);
+    colorText = true;
+  }
+  else if(paraFound==1)
+  {
+    if(paraDone.length==projectText.length)
+    {
+      speechOut.speak("We have gone through the entire passage.");
+    }
+    else
+    {
+      startSpeech();
+    }
+  }
 }
 
 //function definition related to "stop" button
@@ -138,6 +173,6 @@ function draw()
     }
 
     text(projectText[i], xPos_Text, yPos_Text, width/1.6, 100);
-    yPos_Text+=height/17;
+    yPos_Text+=height/8.5;
   }
 }
