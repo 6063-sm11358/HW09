@@ -7,6 +7,7 @@ let colorText;
 
 let speechOut;
 let paraNum;
+let numVoices;
 
 let startButton;
 let stopButton;
@@ -15,6 +16,8 @@ let rateSlider;
 let rateValue;
 let pitchSlider;
 let pitchValue;
+let voiceSlider;
+let voiceValue;
 
 //creating class for speech-action buttons
 class speechButton
@@ -52,6 +55,11 @@ function setup()
   textSize(15);
   text('- with a twist -', width/1.25, height-(height-70));
 
+  textAlign(CENTER,CENTER);
+  textSize(16);
+  textFont('sans-serif');
+  text('You choose the pitch, "speed", and the voice. The code chooses the paragraph.', width/1.37, height/6.7, 350, 200);
+
   //generating buttons
   speakButton = new speechButton('Speak', width/1.26, height/2, startSpeech);
   stopButton = new speechButton('Stop', width/1.17, height/2, stopSpeech);
@@ -63,12 +71,17 @@ function setup()
   textSize(13);
   text('Rate: ', width/1.24, height/1.65);
   text('Pitch: ', width/1.24, height/1.52);
+  text('Voice: ', width/1.24, height/1.40);
+  
+  // numVoices = speechOut.voices.length;
 
   //generating speech property sliders
   rateSlider = createSlider(0.1, 2, 1, 0.1);
   rateSlider.position(width/1.22,height/1.69);
   pitchSlider = createSlider(0.01, 2, 1, 0);
   pitchSlider.position(width/1.22,height/1.55);
+  voiceSlider = createSlider(1,24,1,1);
+  voiceSlider.position(width/1.22,height/1.43);
 }
 
 //function definition related to "speak" button
@@ -76,7 +89,7 @@ function startSpeech()
 {
   paraNum = int(random(0,projectText.length));
   speechOut.speak(projectText[paraNum]);
-  
+
   colorText = true;
 }
 
@@ -89,12 +102,15 @@ function stopSpeech()
 
 function draw()
 {
-  //assigning rate & pitch values dynamically
+  //assigning rate, pitch, voice values dynamically
   rateValue = rateSlider.value();
   speechOut.setRate(rateValue);
   
   pitchValue = pitchSlider.value();
   speechOut.setPitch(pitchValue);
+  
+  voiceValue = voiceSlider.value();
+  speechOut.setVoice(voiceValue);
 
   rectMode(CORNER);
   fill(255);
@@ -120,7 +136,7 @@ function draw()
     {
       fill(0);
     }
-    
+
     text(projectText[i], xPos_Text, yPos_Text, width/1.6, 100);
     yPos_Text+=height/17;
   }
